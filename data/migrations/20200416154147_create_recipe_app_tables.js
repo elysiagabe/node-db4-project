@@ -44,8 +44,7 @@ exports.up = function(knex) {
         tbl.increments();
         tbl.integer('step_number')
             .unsigned()
-            .notNullable()
-            .unique();
+            .notNullable();
         tbl.text('directions')
             .notNullable();
         tbl.integer('recipe_id')
