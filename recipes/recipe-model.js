@@ -3,7 +3,8 @@ const db = require('../data/db-config');
 module.exports = {
     getRecipes,
     getShoppingList,
-    getInstructions
+    getInstructions,
+    getRecipesByIngredient
 }
 
 // Get recipes function
@@ -23,7 +24,9 @@ function getShoppingList(recipe_id) {
         , 'i.name as ingredient')
         .from('recipe_ingredients as ri')
         .join('measurements as m', 'ri.measurement_id', 'm.id')
-        .join('ingredients as i', 'ri.ingredient_id', recipe_id)
+        .join('ingredients as i', 'ri.ingredient_id', 'i.id')
+        .where('ri.recipe_id', recipe_id)
+        .orderBy('i.name')
 }
 
 // Get instructions for specified recipe function
@@ -33,4 +36,16 @@ function getInstructions(recipe_id) {
         .from('directions')
         .where('recipe_id', recipe_id)
         .orderBy('step_number')
+}
+
+// Get recipes by a specific ingredient
+// In SQL: SELECT r.name
+// FROM recipes r
+// JOIN recipe_ingredients ri ON r.id = ri.recipe_id
+// WHERE ri.ingredient_id = 9
+function getRecipesByIngredient(ingredient_id) {
+    return db.select('r.name as recipe')
+        .from('recipes as r')
+        .join('recipe_ingredients as ri', 'r.id', 'ri.recipe_id')
+        .where('ri.ingredient_id', ingredient_id)
 }
